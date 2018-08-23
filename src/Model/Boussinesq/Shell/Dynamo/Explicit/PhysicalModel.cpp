@@ -16,29 +16,29 @@
 
 // Class include
 //
-#include "Model/Boussinesq/Shell/Dynamo/Explicit/PhysicalModel.hpp"
+#include "QuICC/Model/Boussinesq/Shell/Dynamo/Explicit/PhysicalModel.hpp"
 
 // Project includes
 //
-#include "Model/Boussinesq/Shell/Dynamo/Transport.hpp"
-#include "Model/Boussinesq/Shell/Dynamo/Momentum.hpp"
-#include "Model/Boussinesq/Shell/Dynamo/Induction.hpp"
-#include "Enums/FieldIds.hpp"
-#include "IoVariable/StateFileReader.hpp"
-#include "IoVariable/StateFileWriter.hpp"
-#include "IoVariable/VisualizationFileWriter.hpp"
-#include "IoTools/IdToHuman.hpp"
-#include "IoVariable/ShellScalarEnergyWriter.hpp"
-#include "IoVariable/ShellTorPolEnergyWriter.hpp"
-#include "Generator/States/RandomScalarState.hpp"
-#include "Generator/States/RandomVectorState.hpp"
-#include "Generator/States/ShellExactStateIds.hpp"
-#include "Generator/States/ShellExactScalarState.hpp"
-#include "Generator/States/ShellExactVectorState.hpp"
-#include "Generator/Visualizers/ScalarFieldVisualizer.hpp"
-#include "Generator/Visualizers/VectorFieldVisualizer.hpp"
-#include "Generator/Visualizers/SphericalVerticalFieldVisualizer.hpp"
-#include "Model/PhysicalModelBase.hpp"
+#include "QuICC/Model/Boussinesq/Shell/Dynamo/Transport.hpp"
+#include "QuICC/Model/Boussinesq/Shell/Dynamo/Momentum.hpp"
+#include "QuICC/Model/Boussinesq/Shell/Dynamo/Induction.hpp"
+#include "QuICC/Enums/FieldIds.hpp"
+#include "QuICC/IoVariable/StateFileReader.hpp"
+#include "QuICC/IoVariable/StateFileWriter.hpp"
+#include "QuICC/IoVariable/VisualizationFileWriter.hpp"
+#include "QuICC/IoTools/IdToHuman.hpp"
+#include "QuICC/IoVariable/ShellScalarEnergyWriter.hpp"
+#include "QuICC/IoVariable/ShellTorPolEnergyWriter.hpp"
+#include "QuICC/Generator/States/RandomScalarState.hpp"
+#include "QuICC/Generator/States/RandomVectorState.hpp"
+#include "QuICC/Generator/States/ShellExactStateIds.hpp"
+#include "QuICC/Generator/States/ShellExactScalarState.hpp"
+#include "QuICC/Generator/States/ShellExactVectorState.hpp"
+#include "QuICC/Generator/Visualizers/ScalarFieldVisualizer.hpp"
+#include "QuICC/Generator/Visualizers/VectorFieldVisualizer.hpp"
+#include "QuICC/Generator/Visualizers/SphericalVerticalFieldVisualizer.hpp"
+#include "QuICC/Model/PhysicalModelBase.hpp"
 
 namespace QuICC {
 
