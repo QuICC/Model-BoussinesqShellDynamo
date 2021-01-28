@@ -1,7 +1,6 @@
-/** 
+/**
  * @file Induction.cpp
  * @brief Source of the implementation of the vector induction equation in the Boussinesq thermal convection dynamo in a spherical shell model
- * @author Philippe Marti \<philippe.marti@colorado.edu\>
  */
 
 // Configuration includes
@@ -19,10 +18,13 @@
 
 // Project includes
 //
-#include "QuICC/Base/Typedefs.hpp"
-#include "QuICC/Base/MathConstants.hpp"
-#include "QuICC/Enums/NonDimensional.hpp"
-#include "QuICC/PhysicalOperators/Cross.hpp"
+#include "QuICC/Typedefs.hpp"
+#include "QuICC/Math/Constants.hpp"
+#include "QuICC/PhysicalNames/Magnetic.hpp"
+#include "QuICC/PhysicalNames/Velocity.hpp"
+#include "QuICC/SpatialScheme/3D/SLFl.hpp"
+#include "QuICC/SpatialScheme/3D/SLFm.hpp"
+#include "QuICC/Model/Boussinesq/Shell/Dynamo/InductionKernel.hpp"
 
 namespace QuICC {
 
@@ -34,8 +36,8 @@ namespace Shell {
 
 namespace Dynamo {
 
-   Induction::Induction(SharedEquationParameters spEqParams)
-      : IVectorEquation(spEqParams)
+   Induction::Induction(SharedEquationParameters spEqParams, SpatialScheme::SharedCISpatialScheme spScheme)
+      : IVectorEquation(spEqParams,spScheme)
    {
       // Set the variable requirements
       this->setRequirements();
@@ -47,11 +49,17 @@ namespace Dynamo {
 
    void Induction::setCoupling()
    {
-      #ifdef QUICC_SPATIALSCHEME_SLFL
-         int start = 1;
-      #else //if QUICC_SPATIALSCHEME_SLFM
-         int start = 0;
-      #endif //QUICC_SPATIALSCHEME_SLFL
+      int start;
+      if(this->ss().id() == SpatialScheme::SLFl::sId)
+      {
+         start = 1;
+      } else if(this->ss().id() == SpatialScheme::SLFm::sId)
+      {
+         start = 0;
+      } else
+      {
+         throw std::logic_error("Unknown spatial scheme was used to setup equations!");
+      }
 
       this->defineCoupling(FieldComponents::Spectral::TOR, CouplingInformation::PROGNOSTIC, start, true, false);
 
@@ -65,41 +73,39 @@ namespace Dynamo {
       this->addNLComponent(FieldComponents::Spectral::TOR,1);
    }
 
-   void Induction::computeNonlinear(Datatypes::PhysicalScalarType& rNLComp, FieldComponents::Physical::Id compId) const
+   void Induction::initNLKernel(const bool force)
    {
-      ///
-      /// Compute \f$\left(\vec u\wedge\vec B\right)\f$
-      ///
-      switch(compId)
-      {
-         case(FieldComponents::Physical::R):
-            Physical::Cross<FieldComponents::Physical::THETA,FieldComponents::Physical::PHI>::set(rNLComp, this->unknown().dom(0).phys(), this->vector(PhysicalNames::VELOCITY).dom(0).phys(), 1.0);
-            break;
-         case(FieldComponents::Physical::THETA):
-            Physical::Cross<FieldComponents::Physical::PHI,FieldComponents::Physical::R>::set(rNLComp, this->unknown().dom(0).phys(), this->vector(PhysicalNames::VELOCITY).dom(0).phys(), 1.0);
-            break;
-         case(FieldComponents::Physical::PHI):
-            Physical::Cross<FieldComponents::Physical::R,FieldComponents::Physical::THETA>::set(rNLComp, this->unknown().dom(0).phys(), this->vector(PhysicalNames::VELOCITY).dom(0).phys(), 1.0);
-            break;
-         default:
-            assert(false);
-            break;
-      }
+      // Initialize the physical kernel
+      auto spNLKernel = std::make_shared<Physical::Kernel::InductionKernel>();
+      spNLKernel->setMagnetic(this->name(), this->spUnknown());
+      spNLKernel->setVelocity(PhysicalNames::Velocity::id(), this->spVector(PhysicalNames::Velocity::id()));
+      spNLKernel->init(1.0);
+      this->mspNLKernel = spNLKernel;
    }
 
    void Induction::setRequirements()
    {
       // Set velocity as equation unknown
-      this->setName(PhysicalNames::MAGNETIC);
+      this->setName(PhysicalNames::Magnetic::id());
 
       // Set solver timing
       this->setSolveTiming(SolveTiming::PROGNOSTIC);
 
-      // Add velocity to requirements: is scalar?, need spectral?, need physical?, need diff?(, need curl?)
-      this->mRequirements.addField(PhysicalNames::MAGNETIC, FieldRequirement(false, true, true, false, false));
+      // Forward transform generates nonlinear RHS
+      this->setForwardPathsType(FWD_IS_NONLINEAR);
 
-      // Add velocity to requirements: is scalar?, need spectral?, need physical?, need diff?(, need curl?)
-      this->mRequirements.addField(PhysicalNames::VELOCITY, FieldRequirement(false, true, true, false, false));
+      // Get reference to spatial scheme
+      const auto& ss = this->ss();
+
+      // Add Magnetic to requirements
+      auto& magReq = this->mRequirements.addField(PhysicalNames::Magnetic::id(), FieldRequirement(false, ss.spectral(), ss.physical()));
+      magReq.enableSpectral();
+      magReq.enablePhysical();
+
+      // Add velocity to requirements: is scalar?
+      auto& velReq = this->mRequirements.addField(PhysicalNames::Velocity::id(), FieldRequirement(false, ss.spectral(), ss.physical()));
+      velReq.enableSpectral();
+      velReq.enablePhysical();
    }
 
 }
