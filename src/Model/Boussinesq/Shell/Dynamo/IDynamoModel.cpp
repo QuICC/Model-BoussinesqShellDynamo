@@ -99,7 +99,7 @@ namespace Dynamo {
       // Add temperature initial state generator
       spScalar = spGen->addEquation<Equations::ShellExactScalarState>(this->spBackend());
       spScalar->setIdentity(PhysicalNames::Temperature::id());
-      switch(1)
+      switch(3)
       {
          case 0:
             {
@@ -129,6 +129,16 @@ namespace Dynamo {
                auto spKernel = std::make_shared<Physical::Kernel::Shell::BenchmarkTempC1>();
                spKernel->init(ri, ro);
                spScalar->setPhysicalKernel(spKernel);
+            }
+            break;
+
+         case 4:
+            {
+               auto spKernel = std::make_shared<Spectral::Kernel::MakeRandom>(spGen->ss().has(SpatialScheme::Feature::ComplexSpectrum));
+               std::vector<MHDFloat> ratios = {1e2, 1e2, 1e2};
+               spKernel->setRatio(ratios);
+               spKernel->init(-1e-15, 1e-15);
+               spScalar->setSrcKernel(spKernel);
             }
             break;
 
