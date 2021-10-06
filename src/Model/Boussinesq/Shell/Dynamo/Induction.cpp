@@ -22,6 +22,7 @@
 #include "QuICC/Math/Constants.hpp"
 #include "QuICC/PhysicalNames/Magnetic.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
+#include "QuICC/SolveTiming/Prognostic.hpp"
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/Model/Boussinesq/Shell/Dynamo/InductionKernel.hpp"
 
@@ -95,7 +96,7 @@ namespace Dynamo {
       this->setName(PhysicalNames::Magnetic::id());
 
       // Set solver timing
-      this->setSolveTiming(SolveTiming::PROGNOSTIC);
+      this->setSolveTiming(SolveTiming::Prognostic::id());
 
       // Forward transform generates nonlinear RHS
       this->setForwardPathsType(FWD_IS_NONLINEAR);
