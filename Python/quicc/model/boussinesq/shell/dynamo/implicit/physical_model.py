@@ -43,16 +43,17 @@ class PhysicalModel(base_model.BaseModel):
                 "cfl_alfven_damping":(1.0 + Pm)/(2.0)
                 }
 
+        rratio = eq_params['rratio']
         # Unit gap width
         if True:
             gap = {
-                    "lower1d":eq_params["rratio"]/(1.0 - eq_params["rratio"]),
-                    "upper1d":1.0/(1.0 - eq_params["rratio"])
+                    "lower1d":rratio/(1.0 - rratio),
+                    "upper1d":1.0/(1.0 - rratio)
                     }
         # Unit radius
         else:
             gap = {
-                    "lower1d":eq_params["rratio"],
+                    "lower1d":rratio,
                     "upper1d":1.0
                     }
 
@@ -309,12 +310,12 @@ class PhysicalModel(base_model.BaseModel):
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
         if field_row == ("velocity","tor"):
             if field_col == ("velocity","tor"):
-                mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, Pm, l_zero_fix = 'zero', restriction = restriction)
                 bc[0] = min(bc[0], 0)
-                mat = mat + geo.i2r2(res[0], ri, ro, res[1], m, bc, 1j*m*T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
+                mat = mat + geo.i2r2(res[0], ri, ro, res[1], m, bc, 1j*m*Pm*T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("velocity","pol"):
-                mat = geo.i2r2coriolis(res[0], ri, ro, res[1], m, bc, -T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i2r2coriolis(res[0], ri, ro, res[1], m, bc, -Pm*T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("magnetic","tor"):
                 mat = geo.zblk(res[0], ri, ro, res[1], m, bc)
@@ -327,12 +328,12 @@ class PhysicalModel(base_model.BaseModel):
 
         elif field_row == ("velocity","pol"):
             if field_col == ("velocity","tor"):
-                mat = geo.i4r4coriolis(res[0], ri, ro, res[1], m, bc, T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i4r4coriolis(res[0], ri, ro, res[1], m, bc, Pm*T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("velocity","pol"):
-                mat = geo.i4r4lapl2(res[0], ri, ro, res[1], m, bc, l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i4r4lapl2(res[0], ri, ro, res[1], m, bc, Pm, l_zero_fix = 'zero', restriction = restriction)
                 bc[0] = min(bc[0], 0)
-                mat = mat + geo.i4r4lapl(res[0], ri, ro, res[1], m, bc, 1j*m*T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
+                mat = mat + geo.i4r4lapl(res[0], ri, ro, res[1], m, bc, 1j*m*Pm*T, with_sh_coeff = 'invlaplh', l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("magnetic","tor"):
                 mat = geo.zblk(res[0], ri, ro, res[1], m, bc)
@@ -351,7 +352,7 @@ class PhysicalModel(base_model.BaseModel):
                 mat = geo.zblk(res[0], ri, ro, res[1], m, bc)
 
             elif field_col == ("magnetic","tor"):
-                mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, 1.0/Pm, l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("magnetic","pol"):
                 mat = geo.zblk(res[0], ri, ro, res[1], m, bc)
@@ -370,7 +371,7 @@ class PhysicalModel(base_model.BaseModel):
                 mat = geo.zblk(res[0], ri, ro, res[1], m, bc)
 
             elif field_col == ("magnetic","pol"):
-                mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, 1.0/Pm, l_zero_fix = 'zero', restriction = restriction)
+                mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, l_zero_fix = 'zero', restriction = restriction)
 
             elif field_col == ("temperature",""):
                 mat = geo.zblk(res[0], ri, ro, res[1], m, bc)
@@ -397,9 +398,9 @@ class PhysicalModel(base_model.BaseModel):
 
             elif field_col == ("temperature",""):
                 if eq_params["heating"] == 0:
-                    mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, 1.0/Pr, restriction = restriction)
+                    mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, Pm/Pr, restriction = restriction)
                 else:
-                    mat = geo.i2r3lapl(res[0], ri, ro, res[1], m, bc, 1.0/Pr, restriction = restriction)
+                    mat = geo.i2r3lapl(res[0], ri, ro, res[1], m, bc, Pm/Pr, restriction = restriction)
 
         if mat is None:
             raise RuntimeError("Equations are not setup properly!")
@@ -468,6 +469,7 @@ class PhysicalModel(base_model.BaseModel):
         ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
         rratio = eq_params['rratio']
         T = 1.0/eq_params['ekman']
+        Pm = eq_params['magnetic_prandtl']
 
         # Easy switch from nondimensionalistion by R_o (Dormy) and (R_o - R_i) (Christensen)
         # Parameters match as:  Dormy   Christensen
@@ -479,11 +481,11 @@ class PhysicalModel(base_model.BaseModel):
             bg_eff = 1.0
         elif eq_params['heating'] == 0:
             # (R_o - R_i) rescaling
-            Ra_eff = (Ra*T/ro)
+            Ra_eff = (Pm**2*Ra*T/ro)
             bg_eff = 2.0/(ro*(1.0 + rratio))
         elif eq_params['heating'] == 1:
             # (R_o - R_i) rescaling
-            Ra_eff = (Ra*T/ro)
+            Ra_eff = (Pm**2*Ra*T/ro)
             bg_eff = ro**2*rratio
 
         # Rescale Rayleigh by E^{-4/3}

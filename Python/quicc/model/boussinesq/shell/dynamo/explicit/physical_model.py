@@ -38,16 +38,17 @@ class PhysicalModel(base_model.BaseModel):
                 "cfl_alfven_damping":(1.0 + Pm)/(2.0)
                 }
 
+        rratio = eq_params['rratio']
         # Unit gap width
         if True:
             gap = {
-                    "lower1d":eq_params["rratio"]/(1.0 - eq_params["rratio"]),
-                    "upper1d":1.0/(1.0 - eq_params["rratio"])
+                    "lower1d":rratio/(1.0 - rratio),
+                    "upper1d":1.0/(1.0 - rratio)
                     }
         # Unit radius
         else:
             gap = {
-                    "lower1d":eq_params["rratio"],
+                    "lower1d":rratio,
                     "upper1d":1.0
                     }
 
@@ -58,7 +59,7 @@ class PhysicalModel(base_model.BaseModel):
     def config_fields(self):
         """Get the list of fields that need a configuration entry"""
 
-        return ["velocity", "magnetic", "temperature"]
+        return ["velocity", "temperature", "magnetic"]
 
     def implicit_fields(self, field_row):
         """Get the list of coupled fields in solve"""
@@ -309,22 +310,22 @@ class PhysicalModel(base_model.BaseModel):
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
         if field_row == ("velocity","tor") and field_col == field_row:
-            mat = geo.i2r2lapl(res[0], ri, ro, l, bc)
+            mat = geo.i2r2lapl(res[0], ri, ro, l, bc, Pm)
 
         elif field_row == ("velocity","pol") and field_col == field_row:
-            mat = geo.i4r4lapl2(res[0], ri, ro, l, bc)
+            mat = geo.i4r4lapl2(res[0], ri, ro, l, bc, Pm)
 
         elif field_row == ("magnetic","tor") and field_col == field_row:
-            mat = geo.i2r2lapl(res[0], ri, ro, l, bc, 1.0/Pm)
+            mat = geo.i2r2lapl(res[0], ri, ro, l, bc)
 
         elif field_row == ("magnetic","pol") and field_col == field_row:
-            mat = geo.i2r2lapl(res[0], ri, ro, l, bc, 1.0/Pm)
+            mat = geo.i2r2lapl(res[0], ri, ro, l, bc)
 
         elif field_row == ("temperature","") and field_col == field_row:
             if eq_params["heating"] == 0:
-                mat = geo.i2r2lapl(res[0], ri, ro, l, bc, 1.0/Pr)
+                mat = geo.i2r2lapl(res[0], ri, ro, l, bc, Pm/Pr)
             else:
-                mat = geo.i2r3lapl(res[0], ri, ro, l, bc, 1.0/Pr)
+                mat = geo.i2r3lapl(res[0], ri, ro, l, bc, Pm/Pr)
 
         if mat is None:
             raise RuntimeError("Equations are not setup properly!")
@@ -385,6 +386,7 @@ class PhysicalModel(base_model.BaseModel):
         ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
         rratio = eq_params['rratio']
         T = 1.0/eq_params['ekman']
+        Pm = eq_params['magnetic_prandtl']
 
         # Easy switch from nondimensionalistion by R_o (Dormy) and (R_o - R_i) (Christensen)
         # Parameters match as:  Dormy   Christensen
@@ -396,11 +398,11 @@ class PhysicalModel(base_model.BaseModel):
             bg_eff = 1.0
         elif eq_params['heating'] == 0:
             # (R_o - R_i) rescaling
-            Ra_eff = (Ra*T/ro)
+            Ra_eff = (Pm**2*Ra*T/ro)
             bg_eff = 2.0/(ro*(1.0 + rratio))
         elif eq_params['heating'] == 1:
             # (R_o - R_i) rescaling
-            Ra_eff = (Ra*T/ro)
+            Ra_eff = (Pm**2*Ra*T/ro)
             bg_eff = ro**2*rratio
 
         return (Ra_eff, bg_eff)
