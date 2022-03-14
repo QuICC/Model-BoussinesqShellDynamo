@@ -359,61 +359,31 @@ namespace Dynamo {
    void IDynamoModel::addAsciiOutputFiles(SharedSimulation spSim)
    {
       // Create temperature energy writer
-      auto spTemp = std::make_shared<Io::Variable::ShellScalarEnergyWriter>("temperature", spSim->ss().tag());
-      spTemp->expect(PhysicalNames::Temperature::id());
-      spSim->addAsciiOutputFile(spTemp);
+      this->enableAsciiFile<Io::Variable::ShellScalarEnergyWriter>("temperature_energy", "temperature", PhysicalNames::Temperature::id(), spSim);
 
-#if 0
       // Create temperature L energy spectrum writer
-      auto spTempL = std::make_shared<Io::Variable::ShellScalarLSpectrumWriter>("temperature", spSim->ss().tag());
-      spTempL->expect(PhysicalNames::Temperature::id());
-      //spTempL->numberOutput();
-      spSim->addAsciiOutputFile(spTempL);
+      this->enableAsciiFile<Io::Variable::ShellScalarLSpectrumWriter>("temperature_l_spectrum", "temperature", PhysicalNames::Temperature::id(), spSim);
 
       // Create temperature M energy spectrum writer
-      auto spTempM = std::make_shared<Io::Variable::ShellScalarMSpectrumWriter>("temperature", spSim->ss().tag());
-      spTempM->expect(PhysicalNames::Temperature::id());
-      //spTempM->numberOutput();
-      spSim->addAsciiOutputFile(spTempM);
-#endif
+      this->enableAsciiFile<Io::Variable::ShellScalarMSpectrumWriter>("temperature_m_spectrum", "temperature", PhysicalNames::Temperature::id(), spSim);
 
       // Create kinetic energy writer
-      auto spKinetic = std::make_shared<Io::Variable::ShellTorPolEnergyWriter>("kinetic", spSim->ss().tag());
-      spKinetic->expect(PhysicalNames::Velocity::id());
-      spSim->addAsciiOutputFile(spKinetic);
+      this->enableAsciiFile<Io::Variable::ShellTorPolEnergyWriter>("kinetic_energy", "kinetic", PhysicalNames::Velocity::id(), spSim);
 
-#if 0
       // Create kinetic L energy spectrum writer
-      auto spKineticL = std::make_shared<Io::Variable::ShellTorPolLSpectrumWriter>("kinetic", spSim->ss().tag());
-      spKineticL->expect(PhysicalNames::Velocity::id());
-      //spKineticL->numberOutput();
-      spSim->addAsciiOutputFile(spKineticL);
+      this->enableAsciiFile<Io::Variable::ShellTorPolLSpectrumWriter>("kinetic_l_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
 
       // Create kinetic M energy spectrum writer
-      auto spKineticM = std::make_shared<Io::Variable::ShellTorPolMSpectrumWriter>("kinetic", spSim->ss().tag());
-      spKineticM->expect(PhysicalNames::Velocity::id());
-      //spKineticM->numberOutput();
-      spSim->addAsciiOutputFile(spKineticM);
-#endif
+      this->enableAsciiFile<Io::Variable::ShellTorPolMSpectrumWriter>("kinetic_m_spectrum", "kinetic", PhysicalNames::Velocity::id(), spSim);
 
       // Create magnetic energy writer
-      auto spMagnetic = std::make_shared<Io::Variable::ShellTorPolEnergyWriter>("magnetic", spSim->ss().tag());
-      spMagnetic->expect(PhysicalNames::Magnetic::id());
-      spSim->addAsciiOutputFile(spMagnetic);
+      this->enableAsciiFile<Io::Variable::ShellTorPolEnergyWriter>("magnetic_energy", "magnetic", PhysicalNames::Magnetic::id(), spSim);
 
-#if 0
       // Create magnetic L energy spectrum writer
-      auto spMagneticL = std::make_shared<Io::Variable::ShellTorPolLSpectrumWriter>("magnetic", spSim->ss().tag());
-      spMagneticL->expect(PhysicalNames::Magnetic::id());
-      //spMagneticL->numberOutput();
-      spSim->addAsciiOutputFile(spMagneticL);
+      this->enableAsciiFile<Io::Variable::ShellTorPolLSpectrumWriter>("magnetic_l_spectrum", "magnetic", PhysicalNames::Magnetic::id(), spSim);
 
       // Create magnetic M energy spectrum writer
-      auto spMagneticM = std::make_shared<Io::Variable::ShellTorPolMSpectrumWriter>("magnetic", spSim->ss().tag());
-      spMagneticM->expect(PhysicalNames::Magnetic::id());
-      //spMagneticM->numberOutput();
-      spSim->addAsciiOutputFile(spMagneticM);
-#endif
+      this->enableAsciiFile<Io::Variable::ShellTorPolMSpectrumWriter>("magnetic_m_spectrum", "magnetic", PhysicalNames::Magnetic::id(), spSim);
    }
 
 }
