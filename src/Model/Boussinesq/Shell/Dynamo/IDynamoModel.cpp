@@ -363,17 +363,19 @@ namespace Dynamo {
       spTemp->expect(PhysicalNames::Temperature::id());
       spSim->addAsciiOutputFile(spTemp);
 
-#if 0
+#if 1
       // Create temperature L energy spectrum writer
       auto spTempL = std::make_shared<Io::Variable::ShellScalarLSpectrumWriter>("temperature", spSim->ss().tag());
       spTempL->expect(PhysicalNames::Temperature::id());
-      //spTempL->numberOutput();
+      spTempL->numberOutput();
+      spTempL->onlyEvery(100);
       spSim->addAsciiOutputFile(spTempL);
 
       // Create temperature M energy spectrum writer
       auto spTempM = std::make_shared<Io::Variable::ShellScalarMSpectrumWriter>("temperature", spSim->ss().tag());
       spTempM->expect(PhysicalNames::Temperature::id());
-      //spTempM->numberOutput();
+      spTempM->numberOutput();
+      spTempM->onlyEvery(100);
       spSim->addAsciiOutputFile(spTempM);
 #endif
 
@@ -382,17 +384,19 @@ namespace Dynamo {
       spKinetic->expect(PhysicalNames::Velocity::id());
       spSim->addAsciiOutputFile(spKinetic);
 
-#if 0
+#if 1
       // Create kinetic L energy spectrum writer
       auto spKineticL = std::make_shared<Io::Variable::ShellTorPolLSpectrumWriter>("kinetic", spSim->ss().tag());
       spKineticL->expect(PhysicalNames::Velocity::id());
-      //spKineticL->numberOutput();
+      spKineticL->numberOutput();
+      spKineticL->onlyEvery(100);
       spSim->addAsciiOutputFile(spKineticL);
 
       // Create kinetic M energy spectrum writer
       auto spKineticM = std::make_shared<Io::Variable::ShellTorPolMSpectrumWriter>("kinetic", spSim->ss().tag());
       spKineticM->expect(PhysicalNames::Velocity::id());
-      //spKineticM->numberOutput();
+      spKineticM->numberOutput();
+      spKineticM->onlyEvery(100);
       spSim->addAsciiOutputFile(spKineticM);
 #endif
 
@@ -401,17 +405,19 @@ namespace Dynamo {
       spMagnetic->expect(PhysicalNames::Magnetic::id());
       spSim->addAsciiOutputFile(spMagnetic);
 
-#if 0
+#if 1
       // Create magnetic L energy spectrum writer
       auto spMagneticL = std::make_shared<Io::Variable::ShellTorPolLSpectrumWriter>("magnetic", spSim->ss().tag());
       spMagneticL->expect(PhysicalNames::Magnetic::id());
-      //spMagneticL->numberOutput();
+      spMagneticL->numberOutput();
+      spMagneticL->onlyEvery(100);
       spSim->addAsciiOutputFile(spMagneticL);
 
       // Create magnetic M energy spectrum writer
       auto spMagneticM = std::make_shared<Io::Variable::ShellTorPolMSpectrumWriter>("magnetic", spSim->ss().tag());
       spMagneticM->expect(PhysicalNames::Magnetic::id());
-      //spMagneticM->numberOutput();
+      spMagneticM->numberOutput();
+      spMagneticM->onlyEvery(100);
       spSim->addAsciiOutputFile(spMagneticM);
 #endif
    }
