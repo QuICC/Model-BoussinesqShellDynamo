@@ -42,6 +42,7 @@
 #include "QuICC/Io/Variable/StateFileReader.hpp"
 #include "QuICC/Io/Variable/StateFileWriter.hpp"
 #include "QuICC/Io/Variable/VisualizationFileWriter.hpp"
+#include "QuICC/Io/Variable/ShellNusseltWriter.hpp"
 #include "QuICC/Io/Variable/ShellScalarEnergyWriter.hpp"
 #include "QuICC/Io/Variable/ShellScalarLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/ShellScalarMSpectrumWriter.hpp"
@@ -379,6 +380,7 @@ namespace Dynamo {
       tags.emplace("temperature_energy", onOff);
       tags.emplace("temperature_l_spectrum", options);
       tags.emplace("temperature_m_spectrum", options);
+      tags.emplace("temperature_nusselt", onOff);
 
       return tags;
    }
@@ -411,6 +413,9 @@ namespace Dynamo {
 
       // Create magnetic M energy spectrum writer
       this->enableAsciiFile<Io::Variable::ShellTorPolMSpectrumWriter>("magnetic_m_spectrum", "magnetic", PhysicalNames::Magnetic::id(), spSim);
+
+      // Create nusselt number writer
+      this->enableAsciiFile<Io::Variable::ShellNusseltWriter>("temperature_nusselt", "temperature_", PhysicalNames::Temperature::id(), spSim);
    }
 
 }
