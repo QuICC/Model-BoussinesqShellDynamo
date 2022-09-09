@@ -11,5 +11,4 @@ quicc_add_benchmark(Implicit
   ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
   VARIANTS "framework/parallel/algorithm:single2d"
   TIMEOUT 500
-  GITTAG add/dynamo_implicit
   )
