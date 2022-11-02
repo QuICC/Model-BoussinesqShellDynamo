@@ -30,7 +30,7 @@
 #include "QuICC/NonDimensional/Ekman.hpp"
 #include "QuICC/NonDimensional/Rayleigh.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
-#include "QuICC/NonDimensional/MagPrandtl.hpp"
+#include "QuICC/NonDimensional/MagneticPrandtl.hpp"
 #include "QuICC/NonDimensional/RRatio.hpp"
 #include "QuICC/NonDimensional/Heating.hpp"
 #include "QuICC/NonDimensional/CflInertial.hpp"
