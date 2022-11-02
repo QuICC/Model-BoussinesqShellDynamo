@@ -42,14 +42,14 @@ class PhysicalModel(base_model.BaseModel):
         # Unit gap width
         if True:
             gap = {
-                    "lower_1d":rratio/(1.0 - rratio),
-                    "upper_1d":1.0/(1.0 - rratio)
+                    "lower1d":rratio/(1.0 - rratio),
+                    "upper1d":1.0/(1.0 - rratio)
                     }
         # Unit radius
         else:
             gap = {
-                    "lower_1d":rratio,
-                    "upper_1d":1.0
+                    "lower1d":rratio,
+                    "upper1d":1.0
                     }
 
         d.update(gap)
@@ -260,7 +260,7 @@ class PhysicalModel(base_model.BaseModel):
 
         Ra_eff, bg_eff = self.nondimensional_factors(eq_params)
 
-        ri, ro = (self.automatic_parameters(eq_params)['lower_1d'], self.automatic_parameters(eq_params)['upper_1d'])
+        ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
 
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
@@ -281,7 +281,7 @@ class PhysicalModel(base_model.BaseModel):
     def nonlinear_block(self, res, eq_params, eigs, bcs, field_row, field_col, restriction = None):
         """Create matrix block for explicit nonlinear term"""
 
-        ri, ro = (self.automatic_parameters(eq_params)['lower_1d'], self.automatic_parameters(eq_params)['upper_1d'])
+        ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
 
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
@@ -305,7 +305,7 @@ class PhysicalModel(base_model.BaseModel):
         Pm = eq_params['magnetic_prandtl']
         Pr = eq_params['prandtl']
 
-        ri, ro = (self.automatic_parameters(eq_params)['lower_1d'], self.automatic_parameters(eq_params)['upper_1d'])
+        ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
 
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
@@ -338,7 +338,7 @@ class PhysicalModel(base_model.BaseModel):
         assert(eigs[0].is_integer())
         l = eigs[0]
 
-        ri, ro = (self.automatic_parameters(eq_params)['lower_1d'], self.automatic_parameters(eq_params)['upper_1d'])
+        ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
 
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_row)
@@ -368,7 +368,7 @@ class PhysicalModel(base_model.BaseModel):
     def boundary_block(self, res, eq_params, eigs, bcs, field_row, field_col, restriction = None):
         """Create matrix block linear operator"""
 
-        ri, ro = (self.automatic_parameters(eq_params)['lower_1d'], self.automatic_parameters(eq_params)['upper_1d'])
+        ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
 
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
@@ -383,7 +383,7 @@ class PhysicalModel(base_model.BaseModel):
         """Compute the effective Rayleigh number and background depending on nondimensionalisation"""
 
         Ra = eq_params['rayleigh']
-        ri, ro = (self.automatic_parameters(eq_params)['lower_1d'], self.automatic_parameters(eq_params)['upper_1d'])
+        ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
         rratio = eq_params['rratio']
         T = 1.0/eq_params['ekman']
         Pm = eq_params['magnetic_prandtl']

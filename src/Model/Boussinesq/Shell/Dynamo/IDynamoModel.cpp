@@ -37,8 +37,8 @@
 #include "QuICC/NonDimensional/CflTorsional.hpp"
 #include "QuICC/NonDimensional/CflAlfvenScale.hpp"
 #include "QuICC/NonDimensional/CflAlfvenDamping.hpp"
-#include "QuICC/NonDimensional/Lower1D.hpp"
-#include "QuICC/NonDimensional/Upper1D.hpp"
+#include "QuICC/NonDimensional/Lower1d.hpp"
+#include "QuICC/NonDimensional/Upper1d.hpp"
 #include "QuICC/Io/Variable/StateFileReader.hpp"
 #include "QuICC/Io/Variable/StateFileWriter.hpp"
 #include "QuICC/Io/Variable/VisualizationFileWriter.hpp"
@@ -124,8 +124,8 @@ namespace Dynamo {
 
          case 3:
             {
-               auto ri = spScalar->eqParams().nd(NonDimensional::Lower1D::id());
-               auto ro = spScalar->eqParams().nd(NonDimensional::Upper1D::id());
+               auto ri = spScalar->eqParams().nd(NonDimensional::Lower1d::id());
+               auto ro = spScalar->eqParams().nd(NonDimensional::Upper1d::id());
                auto spKernel = std::make_shared<Physical::Kernel::Shell::BenchmarkTempC1>();
                spKernel->init(ri, ro);
                spScalar->setPhysicalKernel(spKernel);
@@ -276,8 +276,8 @@ namespace Dynamo {
 
          case 3:
             {
-               auto ri = spScalar->eqParams().nd(NonDimensional::Lower1D::id());
-               auto ro = spScalar->eqParams().nd(NonDimensional::Upper1D::id());
+               auto ri = spScalar->eqParams().nd(NonDimensional::Lower1d::id());
+               auto ro = spScalar->eqParams().nd(NonDimensional::Upper1d::id());
                auto spKernel = std::make_shared<Physical::Kernel::Shell::BenchmarkMagC1>();
                spKernel->init(ri, ro);
                spVector->setPhysicalKernel(spKernel);
