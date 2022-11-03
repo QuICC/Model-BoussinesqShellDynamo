@@ -21,13 +21,13 @@
 #include "QuICC/Typedefs.hpp"
 #include "QuICC/Math/Constants.hpp"
 #include "QuICC/NonDimensional/Ekman.hpp"
-#include "QuICC/NonDimensional/MagPrandtl.hpp"
+#include "QuICC/NonDimensional/MagneticPrandtl.hpp"
 #include "QuICC/PhysicalNames/Magnetic.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/SolveTiming/Prognostic.hpp"
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
-#include "QuICC/Transform/Path/I2CurlNL.hpp"
-#include "QuICC/Transform/Path/I4CurlCurlNL.hpp"
+#include "QuICC/Transform/Path/I2CurlNl.hpp"
+#include "QuICC/Transform/Path/I4CurlCurlNl.hpp"
 #include "QuICC/Model/Boussinesq/Shell/Dynamo/MomentumKernel.hpp"
 
 namespace QuICC {
@@ -75,9 +75,9 @@ namespace Dynamo {
 
    void Momentum::setNLComponents()
    {
-      this->addNLComponent(FieldComponents::Spectral::TOR, Transform::Path::I2CurlNL::id());
+      this->addNLComponent(FieldComponents::Spectral::TOR, Transform::Path::I2CurlNl::id());
 
-      this->addNLComponent(FieldComponents::Spectral::POL, Transform::Path::I4CurlCurlNL::id());
+      this->addNLComponent(FieldComponents::Spectral::POL, Transform::Path::I4CurlCurlNl::id());
    }
 
    void Momentum::initNLKernel(const bool force)
@@ -87,7 +87,7 @@ namespace Dynamo {
       {
          // Initialize the physical kernel
          MHDFloat T = 1.0/this->eqParams().nd(NonDimensional::Ekman::id());
-         MHDFloat Pm = this->eqParams().nd(NonDimensional::MagPrandtl::id());
+         MHDFloat Pm = this->eqParams().nd(NonDimensional::MagneticPrandtl::id());
          auto spNLKernel = std::make_shared<Physical::Kernel::MomentumKernel>();
          spNLKernel->setVelocity(this->name(), this->spUnknown());
          spNLKernel->setMagnetic(PhysicalNames::Magnetic::id(), this->spVector(PhysicalNames::Magnetic::id()));

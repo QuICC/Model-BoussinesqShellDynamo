@@ -23,7 +23,7 @@ class PhysicalModel(base_model.BaseModel):
     def nondimensional_parameters(self):
         """Get the list of nondimensional parameters"""
 
-        return ["magnetic_prandtl", "ekman", "prandtl", "rayleigh", "rratio", "heating"]
+        return ["magnetic_prandtl", "ekman", "prandtl", "rayleigh", "r_ratio", "heating"]
 
     def automatic_parameters(self, eq_params):
         """Extend parameters with automatically computable values"""
@@ -38,7 +38,7 @@ class PhysicalModel(base_model.BaseModel):
                 "cfl_alfven_damping":(1.0 + Pm)/(2.0)
                 }
 
-        rratio = eq_params['rratio']
+        rratio = eq_params['r_ratio']
         # Unit gap width
         if True:
             gap = {
@@ -384,7 +384,7 @@ class PhysicalModel(base_model.BaseModel):
 
         Ra = eq_params['rayleigh']
         ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
-        rratio = eq_params['rratio']
+        rratio = eq_params['r_ratio']
         T = 1.0/eq_params['ekman']
         Pm = eq_params['magnetic_prandtl']
 
