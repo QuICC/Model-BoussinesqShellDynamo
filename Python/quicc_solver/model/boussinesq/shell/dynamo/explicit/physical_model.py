@@ -190,12 +190,52 @@ class PhysicalModel(base_model.BaseModel):
                         bc = {0:-22, 'rt':0}
                     elif field_col == ("velocity","pol"):
                         bc = {0:-41, 'rt':0}
+                    elif field_col == ("temperature",""):
+                        bc = {0:-21, 'rt':0}
 
                 else:
                     if field_row == ("velocity","tor") and field_col == field_row:
                             bc = {0:22}
                     elif field_row == ("velocity","pol") and field_col == field_row:
                             bc = {0:41}
+                    elif field_row == ("temperature","") and field_col == field_row:
+                        bc = {0:21}
+
+            # Fixed flux inner, fixed temperature outer
+            elif bcId == 2:
+                if self.use_galerkin:
+                    if field_col == ("velocity","tor"):
+                        bc = {0:-22, 'rt':0}
+                    elif field_col == ("velocity","pol"):
+                        bc = {0:-41, 'rt':0}
+                    elif field_col == ("temperature",""):
+                        bc = {0:-25, 'rt':0}
+
+                else:
+                    if field_row == ("velocity","tor") and field_col == field_row:
+                            bc = {0:22}
+                    elif field_row == ("velocity","pol") and field_col == field_row:
+                            bc = {0:41}
+                    elif field_row == ("temperature","") and field_col == field_row:
+                        bc = {0:25}
+
+            # Fixed temperature inner, fixed flux outer
+            elif bcId == 3:
+                if self.use_galerkin:
+                    if field_col == ("velocity","tor"):
+                        bc = {0:-22, 'rt':0}
+                    elif field_col == ("velocity","pol"):
+                        bc = {0:-41, 'rt':0}
+                    elif field_col == ("temperature",""):
+                        bc = {0:-26, 'rt':0}
+
+                else:
+                    if field_row == ("velocity","tor") and field_col == field_row:
+                            bc = {0:22}
+                    elif field_row == ("velocity","pol") and field_col == field_row:
+                            bc = {0:41}
+                    elif field_row == ("temperature","") and field_col == field_row:
+                        bc = {0:26}
 
             # Set LHS galerkin restriction
             if self.use_galerkin:
