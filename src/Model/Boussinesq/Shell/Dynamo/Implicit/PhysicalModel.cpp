@@ -3,21 +3,14 @@
  * @brief Source of the Boussinesq thermal convection dynamo in a spherical shell (Toroidal/Poloidal formulation)
  */
 
-// Configuration includes
-//
-
 // System includes
 //
 
-// External includes
-//
-
-// Class include
-//
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/Implicit/PhysicalModel.hpp"
-
 // Project includes
 //
+#include "QuICC/Model/Boussinesq/Shell/Dynamo/Implicit/PhysicalModel.hpp"
+#include "QuICC/Model/Boussinesq/Shell/Dynamo/Implicit/ModelBackend.hpp"
+#include "QuICC/Model/PyModelBackend.hpp"
 
 namespace QuICC {
 
@@ -36,9 +29,22 @@ namespace Implicit {
       return "boussinesq.shell.dynamo.implicit.physical_model";
    }
 
-}
-}
-}
-}
-}
-}
+   void PhysicalModel::init()
+   {
+#ifdef QUICC_MODEL_BOUSSINESQSHELLDYNAMO_IMPLICIT_BACKEND_CPP
+      IPhysicalModel<Simulation,StateGenerator,VisualizationGenerator>::init();
+
+      this->mpBackend = std::make_shared<ModelBackend>();
+#else
+      IPhysicalPyModel<Simulation,StateGenerator,VisualizationGenerator>::init();
+
+      this->mpBackend = std::make_shared<PyModelBackend>(this->PYMODULE(), this->PYCLASS());
+#endif
+   }
+
+} // Implicit
+} // Dynamo
+} // Shell
+} // Boussinesq
+} // Model
+} // QuICC
