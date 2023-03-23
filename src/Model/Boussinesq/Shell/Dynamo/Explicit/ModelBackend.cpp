@@ -33,6 +33,7 @@
 #include "QuICC/PhysicalNames/Magnetic.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
+#include "QuICC/NonDimensional/MagneticPrandtl.hpp"
 #include "QuICC/NonDimensional/Rayleigh.hpp"
 #include "QuICC/NonDimensional/Ekman.hpp"
 #include "QuICC/NonDimensional/Heating.hpp"
@@ -85,7 +86,7 @@ namespace Explicit {
       mcTruncateQI(false)
 #endif // QUICC_TRANSFORM_CHEBYSHEV_TRUNCATE_QI
    {
-      this->enableSplitEquation(true);
+      this->enableSplitEquation(false);
    }
 
    ModelBackend::SpectralFieldIds ModelBackend::implicitFields(const SpectralFieldId& fId) const
@@ -205,17 +206,21 @@ namespace Explicit {
 
       if(rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR) && rowId == colId)
       {
+         auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
+
          SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nN, nN, ri, ro, l);
-         decMat.real() = spasm.mat();
+         decMat.real() = Pm*spasm.mat();
       }
       else if(rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL) && rowId == colId)
       {
+         auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
+
          if(this->useSplitEquation())
          {
             if(isSplitOperator)
             {
                SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nN, nN, ri, ro, l);
-               decMat.real() = spasm.mat();
+               decMat.real() = Pm*spasm.mat();
             }
             else
             {
@@ -226,7 +231,7 @@ namespace Explicit {
          else
          {
             SparseSM::Chebyshev::LinearMap::I4Y4SphLapl2 spasm(nN, nN, ri, ro, l);
-            decMat.real() = spasm.mat();
+            decMat.real() = Pm*spasm.mat();
          }
       }
       else if(rowId == std::make_pair(PhysicalNames::Magnetic::id(),FieldComponents::Spectral::TOR) && rowId == colId)
@@ -242,17 +247,18 @@ namespace Explicit {
       else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && rowId == colId)
       {
          auto Pr = nds.find(NonDimensional::Prandtl::id())->second->value();
+         auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
          auto heatingMode = nds.find(NonDimensional::Heating::id())->second->value();
 
          if(heatingMode == 0)
          {
             SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nN, nN, ri, ro, l);
-            decMat.real() = (1.0/Pr)*spasm.mat();
+            decMat.real() = (Pm/Pr)*spasm.mat();
          }
          else
          {
             SparseSM::Chebyshev::LinearMap::I2Y3SphLapl spasm(nN, nN, ri, ro, l);
-            decMat.real() = (1.0/Pr)*spasm.mat();
+            decMat.real() = (Pm/Pr)*spasm.mat();
          }
       }
       else

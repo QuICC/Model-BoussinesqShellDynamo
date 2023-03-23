@@ -32,6 +32,7 @@
 #include "QuICC/PhysicalNames/Magnetic.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
+#include "QuICC/NonDimensional/MagneticPrandtl.hpp"
 #include "QuICC/NonDimensional/Rayleigh.hpp"
 #include "QuICC/NonDimensional/Ekman.hpp"
 #include "QuICC/NonDimensional/Heating.hpp"
@@ -102,6 +103,8 @@ namespace Implicit {
       SpectralFieldId temp = std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR);
       SpectralFieldIds fields = {velTor, velPol, magTor, magPol, temp};
 
+      // sort the fields
+      std::sort(fields.begin(), fields.end());
       return fields;
    }
 
@@ -226,6 +229,7 @@ namespace Implicit {
       {
          if(rowId == colId)
          {
+            const auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
             const auto Ek = nds.find(NonDimensional::Ekman::id())->second->value();
             const auto T = 1.0/Ek;
 
@@ -237,7 +241,7 @@ namespace Implicit {
                   const auto dl = static_cast<MHDFloat>(l);
                   const auto invlapl = 1.0/(dl*(dl + 1.0));
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl i2r2lapl(nN, nN, ri, ro, l);
-                  SparseMatrix bMat = i2r2lapl.mat(); 
+                  SparseMatrix bMat = Pm*i2r2lapl.mat(); 
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -245,7 +249,7 @@ namespace Implicit {
                   this->addBlock(decMat.real(), bMat, rowShift, colShift);
 
                   SparseSM::Chebyshev::LinearMap::I2Y2 i2r2(nN, nN, ri, ro);
-                  bMat = m*T*invlapl*i2r2.mat();
+                  bMat = m*Pm*T*invlapl*i2r2.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -265,6 +269,7 @@ namespace Implicit {
                return (l - MHD_MP(1.0))*(l + MHD_MP(1.0))*precision::sqrt(((l - m)*(l + m))/((MHD_MP(2.0)*l - MHD_MP(1.0))*(MHD_MP(2.0)*l + MHD_MP(1.0))));
             };
 
+            const auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
             const auto Ek = nds.find(NonDimensional::Ekman::id())->second->value();
             const auto T = 1.0/Ek;
 
@@ -281,11 +286,11 @@ namespace Implicit {
                   const auto invlapl = 1.0/(dl*(dl + 1.0));
                   SparseSM::Chebyshev::LinearMap::I2Y1 cor_r(nN, nN, ri, ro);
                   auto norm = (dl - MHD_MP(1.0))*coriolis(l, m);
-                  SparseMatrix bMat = -static_cast<MHDFloat>(norm*T*invlapl)*cor_r.mat();
+                  SparseMatrix bMat = -static_cast<MHDFloat>(norm*Pm*T*invlapl)*cor_r.mat();
 
                   SparseSM::Chebyshev::LinearMap::I2Y2D1 cordr(nN, nN, ri, ro);
                   norm = -coriolis(l, m);
-                  bMat += -static_cast<MHDFloat>(norm*T*invlapl)*cordr.mat();
+                  bMat += -static_cast<MHDFloat>(norm*Pm*T*invlapl)*cordr.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -313,7 +318,7 @@ namespace Implicit {
                   const auto invlapl = MHD_MP(1.0)/(dl*(dl + MHD_MP(1.0)));
                   SparseSM::Chebyshev::LinearMap::I2Y1 cor_r(nN, nN, ri, ro);
                   auto norm = -(dl + MHD_MP(2.0))*coriolis(l+1, m);
-                  SparseMatrix bMat = -static_cast<MHDFloat>(norm*T*invlapl)*cor_r.mat();
+                  SparseMatrix bMat = -static_cast<MHDFloat>(norm*Pm*T*invlapl)*cor_r.mat();
 
                   SparseSM::Chebyshev::LinearMap::I2Y2D1 cordr(nN, nN, ri, ro);
                   norm = -coriolis(l+1, m);
@@ -338,6 +343,7 @@ namespace Implicit {
       {
          if(rowId == colId)
          {
+            const auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
             const auto Ek = nds.find(NonDimensional::Ekman::id())->second->value();
             const auto T = 1.0/Ek;
 
@@ -349,7 +355,7 @@ namespace Implicit {
                   const auto dl = static_cast<QuICC::internal::MHDFloat>(l);
                   const auto invlapl = MHD_MP(1.0)/(dl*(dl + MHD_MP(1.0)));
                   SparseSM::Chebyshev::LinearMap::I4Y4SphLapl2 diffusion(nN, nN, ri, ro, l);
-                  SparseMatrix bMat = diffusion.mat();
+                  SparseMatrix bMat = Pm*diffusion.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -357,7 +363,7 @@ namespace Implicit {
 
                   this->addBlock(decMat.real(), bMat, rowShift, colShift);
                   SparseSM::Chebyshev::LinearMap::I4Y4SphLapl coriolis(nN, nN, ri, ro, l);
-                  bMat = static_cast<MHDFloat>(m*T*invlapl)*coriolis.mat();
+                  bMat = static_cast<MHDFloat>(m*Pm*T*invlapl)*coriolis.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -377,6 +383,7 @@ namespace Implicit {
                return (l - MHD_MP(1.0))*(l + MHD_MP(1.0))*precision::sqrt(((l - m)*(l + m))/((MHD_MP(2.0)*l - MHD_MP(1.0))*(MHD_MP(2.0)*l + MHD_MP(1.0))));
             };
 
+            const auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
             const auto Ek = nds.find(NonDimensional::Ekman::id())->second->value();
             const auto T = 1.0/Ek;
 
@@ -392,10 +399,10 @@ namespace Implicit {
                   const auto invlapl = 1.0/(dl*(dl + 1.0));
                   SparseSM::Chebyshev::LinearMap::I4Y3 cor_r(nN, nN, ri, ro);
                   auto norm = (dl - 1.0)*coriolis(l, m);
-                  SparseMatrix bMat = static_cast<MHDFloat>(norm*T*invlapl)*cor_r.mat();
+                  SparseMatrix bMat = static_cast<MHDFloat>(norm*Pm*T*invlapl)*cor_r.mat();
                   SparseSM::Chebyshev::LinearMap::I4Y4D1 cordr(nN, nN, ri, ro);
                   norm = -coriolis(l, m);
-                  bMat += static_cast<MHDFloat>(norm*T*invlapl)*cordr.mat();
+                  bMat += static_cast<MHDFloat>(norm*Pm*T*invlapl)*cordr.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -421,10 +428,10 @@ namespace Implicit {
                   const auto invlapl = 1.0/(dl*(dl + 1.0));
                   SparseSM::Chebyshev::LinearMap::I4Y3 cor_r(nN, nN, ri, ro);
                   auto norm = -(dl + 2.0)*coriolis(l+1, m);
-                  SparseMatrix bMat = static_cast<MHDFloat>(norm*T*invlapl)*cor_r.mat();
+                  SparseMatrix bMat = static_cast<MHDFloat>(norm*Pm*T*invlapl)*cor_r.mat();
                   SparseSM::Chebyshev::LinearMap::I4Y4D1 cordr(nN, nN, ri, ro);
                   norm = -coriolis(l+1, m);
-                  bMat += static_cast<MHDFloat>(norm*T*invlapl)*cordr.mat();
+                  bMat += static_cast<MHDFloat>(norm*Pm*T*invlapl)*cordr.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -516,6 +523,7 @@ namespace Implicit {
       {
          if(rowId == colId)
          {
+            const auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
             auto Pr = nds.find(NonDimensional::Prandtl::id())->second->value();
             auto heatingMode = nds.find(NonDimensional::Heating::id())->second->value();
 
@@ -526,12 +534,12 @@ namespace Implicit {
                if(heatingMode == 0)
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nN, nN, ri, ro, l);
-                  bMat = (1.0/Pr)*spasm.mat();
+                  bMat = (Pm/Pr)*spasm.mat();
                }
                else
                {
                   SparseSM::Chebyshev::LinearMap::I2Y3SphLapl spasm(nN, nN, ri, ro, l);
-                  bMat = (1.0/Pr)*spasm.mat();
+                  bMat = (Pm/Pr)*spasm.mat();
                }
                if(this->useGalerkin())
                {

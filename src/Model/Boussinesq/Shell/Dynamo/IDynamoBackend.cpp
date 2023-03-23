@@ -164,6 +164,7 @@ namespace Dynamo {
 
    MHDFloat IDynamoBackend::effectiveRa(const NonDimensional::NdMap& nds) const
    {
+      auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
       auto effRa = nds.find(NonDimensional::Rayleigh::id())->second->value();
       auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
 
@@ -171,7 +172,7 @@ namespace Dynamo {
       if(ro != 1.0)
       {
          auto T = 1.0/nds.find(NonDimensional::Ekman::id())->second->value();
-         effRa *= T/ro;
+         effRa *= Pm*Pm*T/ro;
       }
 
       return effRa;
