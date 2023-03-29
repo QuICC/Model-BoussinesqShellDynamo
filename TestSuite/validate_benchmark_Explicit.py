@@ -8,7 +8,7 @@ results = []
 
 # Tolerance per max rows
 rows = list(range(0, 101, 10))
-tols = [20, 40, 70, 100, 140, 180, 208, 258, 279, 288, 308]
+tols = [14, 40, 70, 100, 139, 160, 189, 218, 239, 298, 317]
 
 prefixes = ['temperature', 'kinetic', 'magnetic']
 spectra = ['l', 'm']
