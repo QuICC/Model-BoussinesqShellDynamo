@@ -49,16 +49,21 @@ namespace Implicit {
          /// Python script/module name
          virtual std::string PYMODULE() override;
 
+         /**
+          * @brief Initialize specialized backend
+          */
+         void init() final;
+
       protected:
 
       private:
    };
 
-}
-}
-}
-}
-}
-}
+} // Implicit
+} // Dynamo
+} // Shell
+} // Boussinesq
+} // Model
+} // QuICC
 
 #endif // QUICC_MODEL_BOUSSINESQ_SHELL_DYNAMO_IMPLICIT_PHYSICALMODEL_HPP
