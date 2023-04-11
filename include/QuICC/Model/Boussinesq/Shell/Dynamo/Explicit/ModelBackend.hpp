@@ -132,7 +132,7 @@ namespace Explicit {
          SpectralFieldIds explicitNonlinearFields(const SpectralFieldId& fId) const;
 
          /**
-          * @brief Get operator informationa
+          * @brief Get operator information
           *
           * @param tN      Tau radial size
           * @param gN      Galerkin radial truncation

@@ -83,7 +83,7 @@ namespace Dynamo {
          /**
           * @brief Number of boundary conditions
           *
-          * @fId  Field ID for which to get number of BC
+          * @fId  Field ID
           */
          int nBc(const SpectralFieldId& fId) const;
 
