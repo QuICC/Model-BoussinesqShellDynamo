@@ -18,8 +18,6 @@
 
 // Project includes
 //
-#include "QuICC/Typedefs.hpp"
-#include "QuICC/Math/Constants.hpp"
 #include "QuICC/NonDimensional/Ekman.hpp"
 #include "QuICC/NonDimensional/MagneticPrandtl.hpp"
 #include "QuICC/PhysicalNames/Magnetic.hpp"

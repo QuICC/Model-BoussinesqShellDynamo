@@ -68,8 +68,6 @@
 #include "QuICC/SparseSM/Chebyshev/LinearMap/Stencil/R1D1DivR1.hpp"
 #include "QuICC/SparseSM/Chebyshev/LinearMap/Stencil/ValueD1.hpp"
 #include "QuICC/SparseSM/Chebyshev/LinearMap/Stencil/ValueD2.hpp"
-#include "QuICC/Math/Constants.hpp"
-#include "QuICC/Precision.hpp"
 
 namespace QuICC {
 
@@ -252,7 +250,7 @@ namespace Implicit {
                   const auto dl = static_cast<MHDFloat>(l);
                   const auto invlapl = 1.0/(dl*(dl + 1.0));
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl i2r2lapl(nN, nN, ri, ro, l);
-                  SparseMatrix bMat = Pm*i2r2lapl.mat(); 
+                  SparseMatrix bMat = Pm*i2r2lapl.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -490,7 +488,7 @@ namespace Implicit {
                if(l > 0)
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl i2r2lapl(nN, nN, ri, ro, l);
-                  SparseMatrix bMat = i2r2lapl.mat(); 
+                  SparseMatrix bMat = i2r2lapl.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -515,7 +513,7 @@ namespace Implicit {
                if(l > 0)
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl i2r2lapl(nN, nN, ri, ro, l);
-                  SparseMatrix bMat = i2r2lapl.mat(); 
+                  SparseMatrix bMat = i2r2lapl.mat();
                   if(this->useGalerkin())
                   {
                      this->applyGalerkinStencil(bMat, rowId, colId, l, res, bcs, nds);
@@ -783,9 +781,9 @@ namespace Implicit {
          int minL = m;
          // l = 0 is special for Tor/Pol fields
          bool isTorPol = (
-               rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR) || 
+               rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR) ||
                rowId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL) ||
-               rowId == std::make_pair(PhysicalNames::Magnetic::id(),FieldComponents::Spectral::TOR) || 
+               rowId == std::make_pair(PhysicalNames::Magnetic::id(),FieldComponents::Spectral::TOR) ||
                rowId == std::make_pair(PhysicalNames::Magnetic::id(),FieldComponents::Spectral::POL));
          if(m == 0 && isTorPol)
          {
@@ -943,7 +941,7 @@ namespace Implicit {
                colShift += tN;
             }
          }
-         else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && 
+         else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) &&
                colId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL))
          {
             auto heatingMode = nds.find(NonDimensional::Heating::id())->second->value();
