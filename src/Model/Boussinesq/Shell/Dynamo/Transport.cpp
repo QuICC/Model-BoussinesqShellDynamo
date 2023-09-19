@@ -19,7 +19,6 @@
 // Project includes
 //
 #include "QuICC/Transform/Path/Scalar.hpp"
-#include "QuICC/Math/Constants.hpp"
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/PhysicalNames/Velocity.hpp"
 #include "QuICC/SolveTiming/Prognostic.hpp"
