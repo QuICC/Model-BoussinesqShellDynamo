@@ -14,7 +14,7 @@
 
 // Class include
 //
-#include "Model/Boussinesq//Shell/Dynamo/MomentumKernel.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/MomentumKernel.hpp"
 
 // Project includes
 //

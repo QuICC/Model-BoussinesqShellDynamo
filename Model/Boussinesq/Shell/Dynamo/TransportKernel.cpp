@@ -14,7 +14,7 @@
 
 // Class include
 //
-#include "Model/Boussinesq//Shell/Dynamo/TransportKernel.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/TransportKernel.hpp"
 
 // Project includes
 //
