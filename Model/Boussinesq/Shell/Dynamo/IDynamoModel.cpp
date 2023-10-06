@@ -14,13 +14,13 @@
 
 // Class include
 //
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/IDynamoModel.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/IDynamoModel.hpp"
 
 // Project includes
 //
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/Transport.hpp"
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/Momentum.hpp"
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/Induction.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/Transport.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/Momentum.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/Induction.hpp"
 #include "Model/Boussinesq/Shell/Dynamo/gitHash.hpp"
 #include "QuICC/Enums/FieldIds.hpp"
 #include "QuICC/PhysicalNames/Magnetic.hpp"

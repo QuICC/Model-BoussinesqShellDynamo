@@ -12,7 +12,7 @@
 
 // Project includes
 //
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/IDynamoModel.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/IDynamoModel.hpp"
 #include "QuICC/SpatialScheme/3D/SLFl.hpp"
 
 namespace QuICC {

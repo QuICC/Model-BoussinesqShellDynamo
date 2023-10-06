@@ -14,7 +14,7 @@
 
 // Class include
 //
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/Induction.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/Induction.hpp"
 
 // Project includes
 //
@@ -24,7 +24,7 @@
 #include "QuICC/SpatialScheme/ISpatialScheme.hpp"
 #include "QuICC/Transform/Path/I2CurlNl.hpp"
 #include "QuICC/Transform/Path/I2CurlCurlNl.hpp"
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/InductionKernel.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/InductionKernel.hpp"
 
 namespace QuICC {
 

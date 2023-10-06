@@ -14,7 +14,7 @@
 
 // Class include
 //
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/Momentum.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/Momentum.hpp"
 
 // Project includes
 //
@@ -27,7 +27,7 @@
 #include "QuICC/Transform/Path/I2CurlNl.hpp"
 #include "QuICC/Transform/Path/NegI2CurlCurlNl.hpp"
 #include "QuICC/Transform/Path/NegI4CurlCurlNl.hpp"
-#include "QuICC/Model/Boussinesq/Shell/Dynamo/MomentumKernel.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/MomentumKernel.hpp"
 
 namespace QuICC {
 
