@@ -10,6 +10,7 @@
 // Project includes
 //
 #include "Model/Boussinesq/Shell/Dynamo/Implicit/ModelBackend.hpp"
+#include "Types/Internal/Math.hpp"
 #include "QuICC/ModelOperator/Time.hpp"
 #include "QuICC/ModelOperator/ImplicitLinear.hpp"
 #include "QuICC/ModelOperator/ExplicitLinear.hpp"
@@ -275,7 +276,7 @@ namespace Implicit {
          else if(colId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::POL))
          {
             auto coriolis = [](const int l, const int m){
-               return (l - MHD_MP(1.0))*(l + MHD_MP(1.0))*precision::sqrt(((l - m)*(l + m))/((MHD_MP(2.0)*l - MHD_MP(1.0))*(MHD_MP(2.0)*l + MHD_MP(1.0))));
+               return (l - MHD_MP(1.0))*(l + MHD_MP(1.0))*Internal::Math::sqrt(((l - m)*(l + m))/((MHD_MP(2.0)*l - MHD_MP(1.0))*(MHD_MP(2.0)*l + MHD_MP(1.0))));
             };
 
             const auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
@@ -291,7 +292,7 @@ namespace Implicit {
                auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
                if(l > 0)
                {
-                  const auto dl = static_cast<QuICC::internal::MHDFloat>(l);
+                  const auto dl = static_cast<Internal::MHDFloat>(l);
                   const auto invlapl = 1.0/(dl*(dl + 1.0));
                   SparseSM::Chebyshev::LinearMap::I2Y1 cor_r(nN, nN, ri, ro);
                   auto norm = (dl - MHD_MP(1.0))*coriolis(l, m);
@@ -323,7 +324,7 @@ namespace Implicit {
                auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
                if(l > 0)
                {
-                  const auto dl = static_cast<QuICC::internal::MHDFloat>(l);
+                  const auto dl = static_cast<Internal::MHDFloat>(l);
                   const auto invlapl = MHD_MP(1.0)/(dl*(dl + MHD_MP(1.0)));
                   SparseSM::Chebyshev::LinearMap::I2Y1 cor_r(nN, nN, ri, ro);
                   auto norm = -(dl + MHD_MP(2.0))*coriolis(l+1, m);
@@ -361,7 +362,7 @@ namespace Implicit {
                auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
                if(l > 0)
                {
-                  const auto dl = static_cast<QuICC::internal::MHDFloat>(l);
+                  const auto dl = static_cast<Internal::MHDFloat>(l);
                   const auto invlapl = MHD_MP(1.0)/(dl*(dl + MHD_MP(1.0)));
                   SparseSM::Chebyshev::LinearMap::I4Y4SphLapl2 diffusion(nN, nN, ri, ro, l);
                   SparseMatrix bMat = Pm*diffusion.mat();
@@ -389,7 +390,7 @@ namespace Implicit {
          else if(colId == std::make_pair(PhysicalNames::Velocity::id(),FieldComponents::Spectral::TOR))
          {
             auto coriolis = [](const int l, const int m){
-               return (l - MHD_MP(1.0))*(l + MHD_MP(1.0))*precision::sqrt(((l - m)*(l + m))/((MHD_MP(2.0)*l - MHD_MP(1.0))*(MHD_MP(2.0)*l + MHD_MP(1.0))));
+               return (l - MHD_MP(1.0))*(l + MHD_MP(1.0))*Internal::Math::sqrt(((l - m)*(l + m))/((MHD_MP(2.0)*l - MHD_MP(1.0))*(MHD_MP(2.0)*l + MHD_MP(1.0))));
             };
 
             const auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
