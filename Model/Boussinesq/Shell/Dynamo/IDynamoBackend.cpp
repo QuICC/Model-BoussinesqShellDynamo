@@ -78,15 +78,11 @@ namespace Shell {
 
 namespace Dynamo {
 
-   IDynamoBackend::IDynamoBackend()
-      : IModelBackend()
-   {
-   }
-
    std::vector<std::string> IDynamoBackend::fieldNames() const
    {
       std::vector<std::string> names = {
          PhysicalNames::Velocity().tag(),
+         PhysicalNames::Magnetic().tag(),
          PhysicalNames::Temperature().tag()
       };
 
@@ -142,46 +138,25 @@ namespace Dynamo {
       return params;
    }
 
-   MHDFloat IDynamoBackend::effectiveRa(const NonDimensional::NdMap& nds) const
+   int IDynamoBackend::nBc(const SpectralFieldId& fId) const
    {
-      auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
-      auto effRa = nds.find(NonDimensional::Rayleigh::id())->second->value();
-      auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
+      int nBc = 0;
 
-      // Scaled on gap width
-      if(ro != 1.0)
+      if(fId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::TOR) ||
+            fId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
       {
-         auto T = 1.0/nds.find(NonDimensional::Ekman::id())->second->value();
-         effRa *= Pm*Pm*T/ro;
+         nBc = 2;
+      }
+      else if(fId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL))
+      {
+         nBc = 4;
+      }
+      else
+      {
+         nBc = 0;
       }
 
-      return effRa;
-   }
-
-   MHDFloat IDynamoBackend::effectiveBg(const NonDimensional::NdMap& nds) const
-   {
-      MHDFloat effBg = 1.0;
-      auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
-      auto rratio = nds.find(NonDimensional::RRatio::id())->second->value();
-      auto heatingMode = nds.find(NonDimensional::Heating::id())->second->value();
-
-      if(ro == 1.0)
-      {
-         // Nothing
-         //
-      }
-      // gap width and internal heating
-      else if(heatingMode == 0)
-      {
-         effBg = 2.0/(ro*(1.0 + rratio));
-      }
-      // gap width and differential heating
-      else if(heatingMode == 1)
-      {
-         effBg = ro*ro*rratio;
-      }
-
-      return effBg;
+      return nBc;
    }
 
    void IDynamoBackend::applyTau(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int l, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds, const bool isSplitOperator) const
@@ -241,30 +216,6 @@ namespace Dynamo {
                }
             }
          }
-         else if(rowId == std::make_pair(PhysicalNames::Magnetic::id(), FieldComponents::Spectral::TOR) && rowId == colId)
-         {
-            if(bcId == Bc::Name::Insulating::id())
-            {
-               bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::Value>(Position::TOP);
-               bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::Value>(Position::BOTTOM);
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Magnetic Toroidal component not implemented");
-            }
-         }
-         else if(rowId == std::make_pair(PhysicalNames::Magnetic::id(), FieldComponents::Spectral::POL) && rowId == colId)
-         {
-            if(bcId == Bc::Name::Insulating::id())
-            {
-               bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::InsulatingShell>(Position::TOP, l);
-               bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::InsulatingShell>(Position::BOTTOM, l);
-            }
-            else
-            {
-               throw std::logic_error("Boundary conditions for Magnetic Poloidal component not implemented");
-            }
-         }
          else
          {
             if(bcId == Bc::Name::NoSlip::id())
@@ -285,6 +236,30 @@ namespace Dynamo {
             {
                throw std::logic_error("Boundary conditions for Velocity Poloidal component not implemented");
             }
+         }
+      }
+      else if(rowId == std::make_pair(PhysicalNames::Magnetic::id(), FieldComponents::Spectral::TOR) && rowId == colId)
+      {
+         if(bcId == Bc::Name::Insulating::id())
+         {
+            bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::Value>(Position::TOP);
+            bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::Value>(Position::BOTTOM);
+         }
+         else
+         {
+            throw std::logic_error("Boundary conditions for Magnetic Toroidal component not implemented");
+         }
+      }
+      else if(rowId == std::make_pair(PhysicalNames::Magnetic::id(), FieldComponents::Spectral::POL) && rowId == colId)
+      {
+         if(bcId == Bc::Name::Insulating::id())
+         {
+            bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::InsulatingShell>(Position::TOP, l);
+            bcOp.addRow<SparseSM::Chebyshev::LinearMap::Boundary::InsulatingShell>(Position::BOTTOM, l);
+         }
+         else
+         {
+            throw std::logic_error("Boundary conditions for Magnetic Poloidal component not implemented");
          }
       }
       else if(rowId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR) && rowId == colId)
@@ -401,69 +376,68 @@ namespace Dynamo {
       }
    }
 
-   void IDynamoBackend::applyGalerkinStencil(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int l, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds) const
+   void IDynamoBackend::applyGalerkinStencil(SparseMatrix& mat, const SpectralFieldId& rowId, const SpectralFieldId& colId, const int lr, const int lc, const Resolution& res, const BcMap& bcs, const NonDimensional::NdMap& nds) const
    {
-      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
+      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, lr)(0);
 
       auto ri = nds.find(NonDimensional::Lower1d::id())->second->value();
       auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
 
       auto S = mat;
-      this->stencil(S, colId, l, res, false, bcs, nds);
+      this->stencil(S, colId, lc, res, false, bcs, nds);
 
       auto s = this->nBc(rowId);
       SparseSM::Chebyshev::LinearMap::Id qId(nN-s, nN, ri, ro, 0, s);
       mat = qId.mat()*(mat*S);
    }
 
-   int IDynamoBackend::nBc(const SpectralFieldId& fId) const
+namespace implDetails {
+
+   MHDFloat effectiveRa(const NonDimensional::NdMap& nds)
    {
-      int nBc = 0;
+      auto Pm = nds.find(NonDimensional::MagneticPrandtl::id())->second->value();
+      auto effRa = nds.find(NonDimensional::Rayleigh::id())->second->value();
+      auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
 
-      if(fId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::TOR) ||
-            fId == std::make_pair(PhysicalNames::Temperature::id(), FieldComponents::Spectral::SCALAR))
+      // Scaled on gap width
+      if(ro != 1.0)
       {
-         nBc = 2;
-      }
-      else if(fId == std::make_pair(PhysicalNames::Velocity::id(), FieldComponents::Spectral::POL))
-      {
-         nBc = 4;
-      }
-      else
-      {
-         nBc = 0;
+         auto T = 1.0/nds.find(NonDimensional::Ekman::id())->second->value();
+         effRa *= Pm*Pm*T/ro;
       }
 
-      return nBc;
+      return effRa;
    }
 
-   void IDynamoBackend::blockInfo(int& tN, int& gN, ArrayI& shift, int& rhs, const SpectralFieldId& fId, const Resolution& res, const MHDFloat l, const BcMap& bcs) const
+   MHDFloat effectiveBg(const NonDimensional::NdMap& nds)
    {
-      auto nN = res.counter().dimensions(Dimensions::Space::SPECTRAL, l)(0);
-      tN = nN;
+      MHDFloat effBg = 1.0;
+      auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
+      auto rratio = nds.find(NonDimensional::RRatio::id())->second->value();
+      auto heatingMode = nds.find(NonDimensional::Heating::id())->second->value();
 
-      int shiftR = this->nBc(fId);
-      if(this->useGalerkin())
+      if(ro == 1.0)
       {
-         gN = (nN - shiftR);
+         // Nothing
+         //
       }
-      else
+      // gap width and internal heating
+      else if(heatingMode == 0)
       {
-         shiftR = 0;
-         gN = nN;
+         effBg = 2.0/(ro*(1.0 + rratio));
+      }
+      // gap width and differential heating
+      else if(heatingMode == 1)
+      {
+         effBg = ro*ro*rratio;
       }
 
-      // Set galerkin shifts
-      shift(0) = shiftR;
-      shift(1) = 0;
-      shift(2) = 0;
-
-      rhs = 1;
+      return effBg;
    }
 
-
-} // Dynamo
-} // Shell
-} // Boussinesq
-} // Model
-} // QuICC
+} // namespace implDetails
+} // namespace Dynamo
+} // namespace Shell
+} // namespace Boussinesq
+} // namespace Model
+} // namespace QuICC
