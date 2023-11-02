@@ -1,6 +1,7 @@
 /**
  * @file Induction.hpp
- * @brief Implementation of the vector induction equation for the Boussinesq thermal convection dynamo spherical shell
+ * @brief Implementation of the vector induction equation for the Boussinesq
+ * thermal convection dynamo spherical shell
  */
 
 #ifndef QUICC_MODEL_BOUSSINESQ_SHELL_DYNAMO_INDUCTION_HPP
@@ -30,52 +31,55 @@ namespace Shell {
 
 namespace Dynamo {
 
+/**
+ * @brief Implementation of the vector induction equation for the Boussinesq
+ * thermal convection dynamo in a spherical shell
+ */
+class Induction : public IVectorEquation
+{
+public:
    /**
-    * @brief Implementation of the vector induction equation for the Boussinesq thermal convection dynamo in a spherical shell
+    * @brief Simple constructor
+    *
+    * @param spEqParams  Shared equation parameters
     */
-   class Induction: public IVectorEquation
-   {
-      public:
-         /**
-          * @brief Simple constructor
-          *
-          * @param spEqParams  Shared equation parameters
-          */
-         Induction(SharedEquationParameters spEqParams, SpatialScheme::SharedCISpatialScheme spScheme, std::shared_ptr<Model::IModelBackend> spBackend);
+   Induction(SharedEquationParameters spEqParams,
+      SpatialScheme::SharedCISpatialScheme spScheme,
+      std::shared_ptr<Model::IModelBackend> spBackend);
 
-         /**
-          * @brief Simple empty destructor
-          */
-         virtual ~Induction();
+   /**
+    * @brief Simple empty destructor
+    */
+   virtual ~Induction();
 
-         /**
-          * @brief Initialize nonlinear interaction kernel
-          */
-         virtual void initNLKernel(const bool force = false) override;
+   /**
+    * @brief Initialize nonlinear interaction kernel
+    */
+   virtual void initNLKernel(const bool force = false) override;
 
-      protected:
-         /**
-          * @brief Set variable requirements
-          */
-         virtual void setRequirements() override;
+protected:
+   /**
+    * @brief Set variable requirements
+    */
+   virtual void setRequirements() override;
 
-         /**
-          * @brief Set the equation coupling information
-          */
-         virtual void setCoupling() override;
+   /**
+    * @brief Set the equation coupling information
+    */
+   virtual void setCoupling() override;
 
-         /**
-          * @brief Set the nonlinear integration components
-          */
-         virtual void setNLComponents() override;
+   /**
+    * @brief Set the nonlinear integration components
+    */
+   virtual void setNLComponents() override;
 
-      private:
-   };
+private:
+};
 
-}
-}
-}
-}
-}
+} // namespace Dynamo
+} // namespace Shell
+} // namespace Boussinesq
+} // namespace Equations
+} // namespace QuICC
 
 #endif // QUICC_MODEL_BOUSSINESQ_SHELL_DYNAMO_INDUCTION_HPP
