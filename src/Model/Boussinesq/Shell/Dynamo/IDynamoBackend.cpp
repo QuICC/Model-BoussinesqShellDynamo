@@ -32,6 +32,8 @@
 #include "QuICC/PhysicalNames/Temperature.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
 #include "QuICC/NonDimensional/MagneticPrandtl.hpp"
+#include "QuICC/NonDimensional/Alpha.hpp"
+#include "QuICC/NonDimensional/Beta.hpp"
 #include "QuICC/NonDimensional/Rayleigh.hpp"
 #include "QuICC/NonDimensional/Ekman.hpp"
 #include "QuICC/NonDimensional/Heating.hpp"
@@ -52,6 +54,7 @@
 #include "QuICC/SparseSM/Chebyshev/LinearMap/I2Y3.hpp"
 #include "QuICC/SparseSM/Chebyshev/LinearMap/I2Y2SphLapl.hpp"
 #include "QuICC/SparseSM/Chebyshev/LinearMap/I2Y3SphLapl.hpp"
+#include "QuICC/SparseSM/Chebyshev/LinearMap/I4Y1.hpp"
 #include "QuICC/SparseSM/Chebyshev/LinearMap/I4Y4.hpp"
 #include "QuICC/SparseSM/Chebyshev/LinearMap/I4Y4SphLapl.hpp"
 #include "QuICC/SparseSM/Chebyshev/LinearMap/I4Y4SphLapl2.hpp"
@@ -98,6 +101,8 @@ namespace Dynamo {
       std::vector<std::string> names = {
          NonDimensional::Prandtl().tag(),
          NonDimensional::MagneticPrandtl().tag(),
+         NonDimensional::Alpha().tag(),
+         NonDimensional::Beta().tag(),
          NonDimensional::Rayleigh().tag(),
          NonDimensional::Ekman().tag(),
          NonDimensional::Heating().tag(),
@@ -164,6 +169,7 @@ namespace Dynamo {
       auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
       auto rratio = nds.find(NonDimensional::RRatio::id())->second->value();
       auto heatingMode = nds.find(NonDimensional::Heating::id())->second->value();
+      auto beta = nds.find(NonDimensional::Beta::id())->second->value();
 
       if(ro == 1.0)
       {
@@ -179,6 +185,15 @@ namespace Dynamo {
       else if(heatingMode == 1)
       {
          effBg = ro*ro*rratio;
+      }
+      // gap with mixed heating
+      else if(heatingMode == 2)
+      {
+         effBg = 1.0;
+      }
+      else if(heatingMode == 2)
+      {
+         effBg = 1.0 / (1-rratio*rratio*rratio);
       }
 
       return effBg;
