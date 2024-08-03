@@ -191,7 +191,7 @@ namespace Dynamo {
       {
          effBg = 1.0;
       }
-      else if(heatingMode == 2)
+      else if(heatingMode == 3)
       {
          effBg = 1.0 / (1-rratio*rratio*rratio);
       }
