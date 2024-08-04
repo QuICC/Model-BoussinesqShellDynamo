@@ -291,6 +291,8 @@ class PhysicalModel(base_model.BaseModel):
                 c2 = ro**2*(1-beta*bg_eff) # differential heating contribution
                 if beta==1/bg_eff: # similar to heating=0:
                     mat = geo.i2r2(res[0], ri, ro, bc, -c1*l*(l+1.0))
+                elif beta==0: # similar to heating=1:
+                    mat = geo.i2(res[0], ri, ro, bc, -c2*l*(l+1.0))
                 else:
                     mat = geo.i2r3(res[0], ri, ro, bc, -c1*l*(l+1.0)) + geo.i2(res[0], ri, ro, bc, -c2*l*(l+1.0))
 
@@ -358,7 +360,7 @@ class PhysicalModel(base_model.BaseModel):
                 if beta==1/bg_eff: # same as for heating=0
                     mat = geo.i2r2lapl(res[0], ri, ro, l, bc, Pm/Pr)
                 else:
-                        mat = geo.i2r3lapl(res[0], ri, ro, l, bc, Pm/Pr)
+                    mat = geo.i2r3lapl(res[0], ri, ro, l, bc, Pm/Pr)
 
 
 
