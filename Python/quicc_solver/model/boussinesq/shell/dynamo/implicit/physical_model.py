@@ -25,7 +25,7 @@ class PhysicalModel(base_model.BaseModel):
 
         return ["magnetic_prandtl", "ekman", "prandtl", "rayleigh", "r_ratio", "heating","alpha","beta"]
         # alpha = 1 yields a linear gravity in r, whereas alpha !=1 leads to a alpha*r+(1-alpha)/r^2 type gravity profile
-        # beta = 1 yields a linear dT/dr in r, whereas beta !=1 leads to a beta*r+(1-beta)/r^2 type dT/dr profile
+        # beta = 1 is pure internal heating, beta = 0 is pure differential heating
         # heating=0: internal heating;
         # heating=1: differential heating;
         # heating=2: differential heating + internal heating (proportional to r)
@@ -275,7 +275,7 @@ class PhysicalModel(base_model.BaseModel):
                 # assumes length-scale is the depth of the shell
                 c1 = -beta*bg_eff/ro # internal heating contribution
                 c2 = -ro**2*(1-beta*bg_eff) # differential heating contribution
-                if beta==1: # same as for heating=0
+                if beta==bg_eff: # same as for heating=0
                     mat = geo.i2r2(res[0], ri, ro, res[1], m, bc, c1, with_sh_coeff = 'laplh', restriction = restriction)
                 else:
                     mat = geo.i2r3(res[0], ri, ro, res[1], m, bc, c1, with_sh_coeff = 'laplh', restriction = restriction) + geo.i2(res[0], ri, ro, res[1], m, bc, c2, with_sh_coeff = 'laplh', restriction = restriction)
@@ -302,7 +302,7 @@ class PhysicalModel(base_model.BaseModel):
                 mat = geo.i2r3(res[0], ri, ro, res[1], m, bc, restriction = restriction)
             elif eq_params["heating"] == 2 or eq_params["heating"] == 3:
                 beta = eq_params['beta']
-                if beta==1: # same as for heating=0
+                if beta==bg_eff: # same as for heating=0
                     mat = geo.i2r2(res[0], ri, ro, res[1], m, bc, restriction = restriction)
                 else:
                     mat = geo.i2r3(res[0], ri, ro, res[1], m, bc, restriction = restriction)
@@ -420,7 +420,7 @@ class PhysicalModel(base_model.BaseModel):
                         # assumes length-scale is the depth of the shell
                         c1 = beta*bg_eff/ro # internal heating contribution
                         c2 = ro**2*(1-beta*bg_eff) # differential heating contribution
-                        if beta==1: # same as for heating=0
+                        if beta==bg_eff: # same as for heating=0
                             mat = geo.i2r2(res[0], ri, ro, res[1], m, bc, c1, with_sh_coeff = 'laplh', restriction = restriction)
                         else:
                             mat = geo.i2r3(res[0], ri, ro, res[1], m, bc, c1, with_sh_coeff = 'laplh', restriction = restriction) + geo.i2(res[0], ri, ro, res[1], m, bc, c2, with_sh_coeff = 'laplh', restriction = restriction)
@@ -443,7 +443,7 @@ class PhysicalModel(base_model.BaseModel):
                     mat = geo.i2r3lapl(res[0], ri, ro, res[1], m, bc, Pm/Pr, restriction = restriction)
                 elif eq_params["heating"] == 2 or eq_params["heating"] == 3:
                     beta = eq_params['beta']
-                    if beta==1: # same as for heating=0
+                    if beta==bg_eff: # same as for heating=0
                         mat = geo.i2r2lapl(res[0], ri, ro, res[1], m, bc, Pm/Pr, restriction = restriction)
                     else:
                         mat = geo.i2r3lapl(res[0], ri, ro, res[1], m, bc, Pm/Pr, restriction = restriction)
@@ -483,7 +483,7 @@ class PhysicalModel(base_model.BaseModel):
                 mat = geo.i2r3(res[0], ri, ro, res[1], m, bc, restriction = restriction)
             elif eq_params["heating"] == 2 or eq_params["heating"] == 3:
                 beta = eq_params['beta']
-                if beta == 1: # same as for heating=0
+                if beta == bg_eff: # same as for heating=0
                     mat = geo.i2r2(res[0], ri, ro, res[1], m, bc, restriction = restriction)
                 else:
                     mat = geo.i2r3(res[0], ri, ro, res[1], m, bc, restriction = restriction)
