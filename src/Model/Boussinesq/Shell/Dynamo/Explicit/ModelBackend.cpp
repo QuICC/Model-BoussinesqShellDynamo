@@ -266,7 +266,7 @@ namespace Explicit {
          }
          else if(heatingMode == 2 || heatingMode == 3)
          {
-            if(beta == bg)
+            if(beta == 1/bg)
             {
                SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nN, nN, ri, ro, l);
                decMat.real() = (Pm/Pr)*spasm.mat();
@@ -340,7 +340,7 @@ namespace Explicit {
          }
          else if(heatingMode == 2 || heatingMode == 3)
          {
-            if(beta == bg)
+            if(beta == 1/bg)
             {
                SparseSM::Chebyshev::LinearMap::I2Y2 spasm(nN, nN, ri, ro);
                decMat.real() = spasm.mat();
@@ -543,7 +543,7 @@ namespace Explicit {
                MHDFloat c1, c2;
                c1 = beta*bg/ro;
                c2 = ro*ro*(1-beta*bg);
-               if(beta == bg) 
+               if(beta == 1/bg) 
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2 spasm(nN, nN, ri, ro);
                   decMat.real() = -c1*ll1*spasm.mat();
@@ -583,7 +583,7 @@ namespace Explicit {
             }
             else if(heatingMode == 2 || heatingMode == 3)
             {
-               if(beta==bg)
+               if(beta==1/bg)
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2 spasm(nN, nN, ri, ro);
                   decMat.real() = spasm.mat();
