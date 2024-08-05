@@ -306,6 +306,8 @@ class PhysicalModel(base_model.BaseModel):
 
         ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
 
+        Ra_eff, bg_eff = self.nondimensional_factors(eq_params)
+
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
         if field_row == ("temperature","") and field_col == field_row:
@@ -335,6 +337,8 @@ class PhysicalModel(base_model.BaseModel):
         Pr = eq_params['prandtl']
 
         ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
+
+        Ra_eff, bg_eff = self.nondimensional_factors(eq_params)
 
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_col)
@@ -376,6 +380,8 @@ class PhysicalModel(base_model.BaseModel):
         l = eigs[0]
 
         ri, ro = (self.automatic_parameters(eq_params)['lower1d'], self.automatic_parameters(eq_params)['upper1d'])
+
+        Ra_eff, bg_eff = self.nondimensional_factors(eq_params)
 
         mat = None
         bc = self.convert_bc(eq_params,eigs,bcs,field_row,field_row)
