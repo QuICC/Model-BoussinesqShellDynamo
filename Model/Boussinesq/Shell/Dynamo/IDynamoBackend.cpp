@@ -34,6 +34,8 @@
 #include "QuICC/NonDimensional/CflTorsional.hpp"
 #include "QuICC/NonDimensional/Ekman.hpp"
 #include "QuICC/NonDimensional/Heating.hpp"
+#include "QuICC/NonDimensional/Alpha.hpp"
+#include "QuICC/NonDimensional/Beta.hpp"
 #include "QuICC/NonDimensional/Lower1d.hpp"
 #include "QuICC/NonDimensional/MagneticPrandtl.hpp"
 #include "QuICC/NonDimensional/Prandtl.hpp"
@@ -91,6 +93,7 @@ std::vector<std::string> IDynamoBackend::paramNames() const
    std::vector<std::string> names = {NonDimensional::Prandtl().tag(),
       NonDimensional::MagneticPrandtl().tag(), NonDimensional::Rayleigh().tag(),
       NonDimensional::Ekman().tag(), NonDimensional::Heating().tag(),
+      NonDimensional::Alpha().tag(), NonDimensional::Beta().tag(),
       NonDimensional::RRatio().tag()};
 
    return names;
@@ -478,6 +481,8 @@ MHDFloat effectiveBg(const NonDimensional::NdMap& nds)
    auto ro = nds.find(NonDimensional::Upper1d::id())->second->value();
    auto rratio = nds.find(NonDimensional::RRatio::id())->second->value();
    auto heatingMode = nds.find(NonDimensional::Heating::id())->second->value();
+   auto beta = nds.find(NonDimensional::Beta::id())->second->value();
+
 
    if (ro == 1.0)
    {
@@ -493,6 +498,14 @@ MHDFloat effectiveBg(const NonDimensional::NdMap& nds)
    else if (heatingMode == 1)
    {
       effBg = ro * ro * rratio;
+   }
+   else if(heatingMode == 2)
+   {
+      effBg = 1.0;
+   }
+   else if(heatingMode == 3)
+   {
+      effBg = 1.0 / (1-rratio*rratio*rratio);
    }
 
    return effBg;
