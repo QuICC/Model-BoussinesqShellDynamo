@@ -318,13 +318,13 @@ std::vector<details::BlockDescription> ModelBackend::implicitBlockBuilder(
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nNr, nNc,
                      ri, ro, l);
-                  bMat = Pm * spasm.mat();
+                  bMat = spasm.mat();
                }
                else
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nNr, nNc,
                      ri, ro, l);
-                  bMat = spasm.mat();
+                  bMat = Pm * spasm.mat();
                }
             }
             else
