@@ -318,13 +318,13 @@ std::vector<details::BlockDescription> ModelBackend::implicitBlockBuilder(
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nNr, nNc,
                      ri, ro, l);
-                  bMat = Pm * spasm.mat();
+                  bMat = spasm.mat();
                }
                else
                {
                   SparseSM::Chebyshev::LinearMap::I2Y2SphLapl spasm(nNr, nNc,
                      ri, ro, l);
-                  bMat = spasm.mat();
+                  bMat = Pm * spasm.mat();
                }
             }
             else
@@ -892,8 +892,8 @@ void ModelBackend::modelMatrix(DecoupledZSparse& rModelMatrix,
             auto colId = *pColId;
             auto descr = splitBoundaryValueBlockBuilder(rowId, colId, res, eigs,
                bcs, nds);
-            buildBlock(rModelMatrix, descr, rowId, colId, fields, matIdx,
-               bcType, res, l, l, bcs, nds, false);
+            buildFixedBlock(rModelMatrix, 2, true, descr, rowId, colId, fields,
+               matIdx, bcType, res, l, l, bcs, nds, false);
          }
       }
    }
