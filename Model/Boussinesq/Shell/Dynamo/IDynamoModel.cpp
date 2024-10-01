@@ -34,6 +34,7 @@
 #include "QuICC/Generator/Visualizers/SphericalVerticalFieldVisualizer.hpp"
 #include "QuICC/Generator/Visualizers/VectorFieldVisualizer.hpp"
 #include "QuICC/Io/Variable/ShellNusseltWriter.hpp"
+#include "QuICC/Io/Variable/ShellDipolarityWriter.hpp"
 #include "QuICC/Io/Variable/ShellScalarEnergyWriter.hpp"
 #include "QuICC/Io/Variable/ShellScalarLSpectrumWriter.hpp"
 #include "QuICC/Io/Variable/ShellScalarMSpectrumWriter.hpp"
@@ -400,6 +401,7 @@ IDynamoModel::configTags() const
    tags.emplace("magnetic_energy", onOff);
    tags.emplace("magnetic_l_spectrum", options);
    tags.emplace("magnetic_m_spectrum", options);
+   tags.emplace("dipolarity", onOff);
    // temperature
    tags.emplace("temperature_energy", onOff);
    tags.emplace("temperature_l_spectrum", options);
@@ -449,6 +451,11 @@ void IDynamoModel::addAsciiOutputFiles(SharedSimulation spSim)
    // Create magnetic M energy spectrum writer
    this->enableAsciiFile<Io::Variable::ShellTorPolMSpectrumWriter>(
       "magnetic_m_spectrum", "magnetic", PhysicalNames::Magnetic::id(), spSim);
+
+   // Create dipolarity writer
+   this->enableAsciiFile<Io::Variable::ShellDipolarityWriter>(
+      "dipolarity", "", PhysicalNames::Temperature::id(),
+      spSim);
 
    // Create nusselt number writer
    this->enableAsciiFile<Io::Variable::ShellNusseltWriter>(
