@@ -454,13 +454,14 @@ void IDynamoModel::addAsciiOutputFiles(SharedSimulation spSim)
 
    // Create dipolarity writer
    this->enableAsciiFile<Io::Variable::ShellDipolarityWriter>(
-      "dipolarity", "", PhysicalNames::Temperature::id(),
-      spSim);
+      "dipolarity", "", PhysicalNames::Magnetic::id(),
+      spSim);   
 
    // Create nusselt number writer
    this->enableAsciiFile<Io::Variable::ShellNusseltWriter>(
       "temperature_nusselt", "temperature_", PhysicalNames::Temperature::id(),
       spSim);
+
 }
 
 } // namespace Dynamo
