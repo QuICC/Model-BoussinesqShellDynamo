@@ -242,7 +242,7 @@ void IDynamoModel::addStates(SharedStateGenerator spGen)
       spGen->addEquation<Equations::ShellExactVectorState>(this->spBackend());
    spVector->setIdentity(PhysicalNames::Magnetic::id());
    //switch (3)
-   switch (4)
+   switch (3)
    {
    // Toroidal only
    case 0: {
