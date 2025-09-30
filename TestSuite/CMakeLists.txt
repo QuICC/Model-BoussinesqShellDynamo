@@ -1,12 +1,35 @@
 include(ConfigureBenchmarks)
 quicc_add_benchmark(Explicit
   MODEL "BoussinesqShellDynamo"
+  TYPE "Config"
   WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
   ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
 )
 
 quicc_add_benchmark(Explicit
   MODEL "BoussinesqShellDynamo"
+  TYPE "State"
+  WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
+  ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
+)
+
+quicc_add_benchmark(Explicit
+  MODEL "BoussinesqShellDynamo"
+  TYPE "Visualization"
+  WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
+  ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
+)
+
+quicc_add_benchmark(Explicit
+  MODEL "BoussinesqShellDynamo"
+  TYPE "Model"
+  WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
+  ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
+)
+
+quicc_add_benchmark(Explicit
+  MODEL "BoussinesqShellDynamo"
+  TYPE "Model"
   WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
   ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
   VARIANTS "framework/parallel/algorithm:serial" "framework/timestepping/scheme:ImEx_PC2" "setup/model/split_equation:On"
@@ -15,15 +38,41 @@ quicc_add_benchmark(Explicit
 )
 
 quicc_add_benchmark(Implicit
-    MODEL "BoussinesqShellDynamo"
-    WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
-    ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
-    TIMEOUT 500
+  MODEL "BoussinesqShellDynamo"
+  TYPE "Config"
+  WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
+  ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
+  TIMEOUT 500
+  )
+
+quicc_add_benchmark(Implicit
+  MODEL "BoussinesqShellDynamo"
+  TYPE "State"
+  WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
+  ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
+  TIMEOUT 500
+  )
+
+quicc_add_benchmark(Implicit
+  MODEL "BoussinesqShellDynamo"
+  TYPE "Visualization"
+  WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
+  ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
+  TIMEOUT 500
+  )
+
+quicc_add_benchmark(Implicit
+  MODEL "BoussinesqShellDynamo"
+  TYPE "Model"
+  WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
+  ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
+  TIMEOUT 500
   )
 
 if(QUICC_USE_MPI)
   quicc_add_benchmark(Implicit
     MODEL "BoussinesqShellDynamo"
+    TYPE "Model"
     WORKDIR "${CMAKE_BINARY_DIR}/${QUICC_CURRENT_MODEL_DIR}/TestSuite/Benchmarks"
     ARCHIVEDIR "${CMAKE_BINARY_DIR}/Models/_refdata"
     VARIANTS "framework/parallel/algorithm:single2d"

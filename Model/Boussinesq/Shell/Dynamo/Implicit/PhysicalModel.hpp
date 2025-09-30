@@ -13,8 +13,9 @@
 
 // Project includes
 //
-#include "Model/Boussinesq/Shell/Dynamo/IDynamoModel.hpp"
 #include "QuICC/SpatialScheme/3D/SLFm.hpp"
+#include "QuICC/Model/PyModelBackend.hpp"
+#include "Model/Boussinesq/Shell/Dynamo/Implicit/ModelBackend.hpp"
 
 namespace QuICC {
 
@@ -32,7 +33,7 @@ namespace Implicit {
  * @brief Implementation of the Boussinesq thermal convection dynamo in a
  * spherical shell model (Toroidal/Poloidal formulation)
  */
-class PhysicalModel : public IDynamoModel
+template <typename TBuilder> class PhysicalModel : public TBuilder
 {
 public:
    /// Typedef for the spatial scheme used
@@ -48,9 +49,6 @@ public:
     */
    virtual ~PhysicalModel() = default;
 
-   /// Python script/module name
-   virtual std::string PYMODULE() override;
-
    /**
     * @brief Initialize specialized backend
     */
@@ -59,6 +57,21 @@ public:
 protected:
 private:
 };
+
+template <typename TBuilder> void PhysicalModel<TBuilder>::init()
+{
+   TBuilder::init();
+#ifdef QUICC_MODEL_BOUSSINESQSHELLDYNAMO_IMPLICIT_BACKEND_CPP
+
+   this->mpBackend = std::make_shared<ModelBackend>();
+#else
+   std::string pyModule = "boussinesq.shell.dynamo.implicit.physical_model";
+   std::string pyClass = "PhysicalModel";
+
+   this->mpBackend =
+      std::make_shared<PyModelBackend>(pyModule, pyClass);
+#endif
+}
 
 } // namespace Implicit
 } // namespace Dynamo
