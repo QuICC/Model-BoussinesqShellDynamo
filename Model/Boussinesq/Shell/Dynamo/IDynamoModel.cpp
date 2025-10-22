@@ -42,7 +42,7 @@ VectorFormulation::Id IDynamoModel::SchemeFormulation()
 
 std::string IDynamoModel::version() const
 {
-   return std::string(gitHash);
+   return "BoussinesqShellDynamo:" + std::string(gitHash);
 }
 
 void IDynamoModel::addEquations(SharedSimulation spSim)
